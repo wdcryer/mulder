@@ -1,0 +1,9 @@
+# github.com/gomodule/redigo v2.0.0+incompatible
+github.com/gomodule/redigo/redis
+github.com/gomodule/redigo/internal
+# github.com/rafaeljusto/redigomock v0.0.0-20190202135759-257e089e14a1
+github.com/rafaeljusto/redigomock
+# github.com/tidwall/gjson v1.1.5
+github.com/tidwall/gjson
+# github.com/tidwall/match v1.0.1
+github.com/tidwall/match
