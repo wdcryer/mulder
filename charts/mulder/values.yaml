@@ -1,0 +1,61 @@
+# Default chart values for Mulder.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+---
+# override the chart and release names
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+revisionHistoryLimit: 2
+
+image:
+  repository: thejenkinsxfiles/mulder
+  tag: "1.0.0"
+  pullPolicy: Always
+  pullSecret:
+
+deployment:
+  labels: {}
+  annotations: {}
+  pod:
+    labels: {}
+    annotations: {}
+
+service:
+  type: ClusterIP
+  port: 80
+  labels: {}
+  annotations: {}
+
+ingress:
+  enabled: false
+  # define the ingress hostname
+  host:
+  # set the class to either nginx or gce
+  class:
+  tls:
+    enabled: false
+    # optionally enable auto-certificate using cert-manager
+    acme: false
+    secretName:
+  labels: {}
+  annotations: {}
+
+resources:
+  requests:
+    cpu: 0.1
+    memory: 32M
+  limits:
+    cpu: 1
+    memory: 128M
+
+redis:
+  fullnameOverride: mulder-redis
+  enabled: true
+  cluster:
+    enabled: false
+  master:
+    persistence:
+      enabled: false
+  usePassword: false

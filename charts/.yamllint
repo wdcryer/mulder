@@ -1,0 +1,10 @@
+---
+extends: default
+
+ignore: |
+  /vendor/
+
+rules:
+  line-length:
+    max: 240
+    allow-non-breakable-inline-mappings: true

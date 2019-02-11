@@ -1,0 +1,111 @@
+---
+suite: test ingress
+templates:
+  - ingress.yaml
+tests:
+
+  - it: should render nothing if not enabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a basic Ingress if enabled
+    set:
+      ingress.enabled: true
+      ingress.host: test.example.com
+    release:
+      name: test-release
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Ingress
+      - contains:
+          path: spec.rules
+          content:
+            host: test.example.com
+            http:
+              paths:
+                - backend:
+                    serviceName: test-release
+                    servicePort: 80
+      - isNull:
+          path: spec.tls
+
+  - it: should support ingress class
+    set:
+      ingress.enabled: true
+      ingress.host: test.example.com
+      ingress.class: nginx
+    release:
+      name: test-release
+    asserts:
+      - equal:
+          path: metadata.annotations.kubernetes\.io/ingress\.class
+          value: nginx
+
+  - it: should set tls if enabled
+    set:
+      ingress.enabled: true
+      ingress.host: test.example.com
+      ingress.tls:
+        enabled: true
+        secret:
+    asserts:
+      - equal:
+          path: spec.tls
+          value:
+            - hosts:
+                - test.example.com
+              secretName:
+
+  - it: should set tls acme if enabled
+    set:
+      ingress.enabled: true
+      ingress.host: test.example.com
+      ingress.tls:
+        enabled: true
+        acme: true
+        secret:
+    asserts:
+      - equal:
+          path: metadata.annotations.kubernetes\.io/tls-acme
+          value: "true"
+      - equal:
+          path: spec.tls
+          value:
+            - hosts:
+                - test.example.com
+              secretName:
+
+  - it: should support custom labels and annotations
+    release:
+      name: test-release
+    set:
+      ingress:
+        enabled: true
+        host: test.example.com
+        tls:
+          enabled: true
+          acme: true
+          secret:
+        labels:
+          chart: "{{ .Chart.Name }}"
+        annotations:
+          release: "{{ .Release.Name }}"
+    asserts:
+      - equal:
+          path: metadata.labels.chart
+          value: mulder
+      - equal:
+          path: metadata.annotations.release
+          value: test-release
+      - equal:
+          path: metadata.annotations.kubernetes\.io/tls-acme
+          value: "true"
+      - equal:
+          path: spec.tls
+          value:
+            - hosts:
+                - test.example.com
+              secretName:

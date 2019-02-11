@@ -1,0 +1,61 @@
+---
+suite: test service
+templates:
+  - service.yaml
+tests:
+
+  - it: should render with good default values
+    release:
+      name: test-release
+    asserts:
+      - isNull:
+          path: metadata.annotations
+      - contains:
+          path: spec.ports
+          content:
+            name: http
+            port: 80
+            targetPort: http
+      - equal:
+          path: spec.type
+          value: ClusterIP
+      - equal:
+          path: spec.selector
+          value:
+            app.kubernetes.io/name: mulder
+            app.kubernetes.io/instance: test-release
+      - isEmpty:
+          path: metadata.annotations
+
+  - it: should render with custom values
+    release:
+      name: test-release
+    set:
+      service:
+        type: NodePort
+        port: 8080
+        labels:
+          chart: "{{ .Chart.Name }}"
+        annotations:
+          fabric8.io/expose: "true"
+          fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
+          osiris.deislabs.io/deployment: "{{ .Release.Name }}"
+    asserts:
+      - contains:
+          path: spec.ports
+          content:
+            name: http
+            port: 8080
+            targetPort: http
+      - equal:
+          path: spec.type
+          value: NodePort
+      - equal:
+          path: metadata.labels.chart
+          value: mulder
+      - equal:
+          path: metadata.annotations
+          value:
+            fabric8.io/expose: "true"
+            fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
+            osiris.deislabs.io/deployment: test-release

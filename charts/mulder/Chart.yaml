@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+name: mulder
+description: The Jenkins X Files - Backend API of the Jenkins X workshop
+icon: https://www.cloudbees.com/sites/default/files/blog/the-jenkins-x-files.jpg
+sources:
+  - https://github.com/the-jenkins-x-files/mulder
+version: "1.0.0"

@@ -1,0 +1,39 @@
+---
+{{- if .Values.ingress.enabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "mulder.fullname" . }}
+  labels:
+    helm.sh/chart: {{ include "mulder.chart" . }}
+    app.kubernetes.io/name: {{ include "mulder.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- with .Values.ingress.labels }}
+{{ tpl (toYaml .) $ | trim | indent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.ingress.class }}
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    {{- end }}
+    {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.acme }}
+    kubernetes.io/tls-acme: "true"
+    {{- end }}
+    {{- with .Values.ingress.annotations }}
+{{ tpl (toYaml .) $ | trim | indent 4 }}
+    {{- end }}
+spec:
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ .Release.Name }}
+          servicePort: {{ .Values.service.port }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
+{{- end }}
