@@ -28,7 +28,7 @@ resources:
   requests:
     cpu: 80m
     memory: 128Mi
-probePath: /
+probePath: /health
 livenessProbe:
   initialDelaySeconds: 60
   periodSeconds: 10
@@ -39,3 +39,6 @@ readinessProbe:
   successThreshold: 1
   timeoutSeconds: 1
 terminationGracePeriodSeconds: 10
+
+mulder-redis:
+  usePassword: false
