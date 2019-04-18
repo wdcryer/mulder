@@ -40,5 +40,5 @@ readinessProbe:
   timeoutSeconds: 1
 terminationGracePeriodSeconds: 10
 
-mulder-redis:
+redis:
   usePassword: false
